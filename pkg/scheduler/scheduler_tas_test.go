@@ -6214,6 +6214,7 @@ func TestScheduleForTASPreemption(t *testing.T) {
 					Condition(metav1.Condition{
 						Type:               kueue.WorkloadQuotaReserved,
 						Status:             metav1.ConditionFalse,
+						Reason:             kueue.WorkloadQuotaReservedReasonTopologyPlacementFailed,
 						Message:            "couldn't assign flavors to pod set one: insufficient unused quota for cpu in flavor tas-default, 5 more needed",
 						LastTransitionTime: metav1.NewTime(now),
 					}).

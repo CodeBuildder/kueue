@@ -6367,6 +6367,7 @@ func TestScheduleForTASPreemption(t *testing.T) {
 					Condition(metav1.Condition{
 						Type:               kueue.WorkloadQuotaReserved,
 						Status:             metav1.ConditionFalse,
+						Reason:             kueue.WorkloadQuotaReservedReasonWaitingForQuota,
 						Message:            "couldn't assign flavors to pod set one: insufficient unused quota for cpu in flavor tas-default, 5 more needed",
 						LastTransitionTime: metav1.NewTime(now),
 					}).
@@ -6385,7 +6386,7 @@ func TestScheduleForTASPreemption(t *testing.T) {
 				eventIgnoreMessage,
 			},
 			wantEvents: []utiltesting.EventRecord{
-				utiltesting.MakeEventRecord("default", "marked-needs-preempt", "", corev1.EventTypeWarning).Obj(),
+				utiltesting.MakeEventRecord("default", "marked-needs-preempt", kueue.WorkloadQuotaReservedReasonWaitingForQuota, corev1.EventTypeWarning).Obj(),
 			},
 		},
 	}

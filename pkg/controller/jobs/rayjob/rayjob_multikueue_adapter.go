@@ -25,7 +25,17 @@ import (
 	"sigs.k8s.io/kueue/pkg/util/api"
 )
 
-var _ jobframework.MultiKueueAdapter = ray.NewMKAdapter(copyJobSpec, copyJobStatus, getEmptyList, gvk, getManagedBy, setManagedBy)
+var _ jobframework.MultiKueueAdapter = ray.NewMKAdapter(
+	copyJobSpec, copyJobStatus, getEmptyList, gvk, getManagedBy, setManagedBy,
+	ray.WithMarkInactiveOnDelete(markInactive),
+)
+
+// markInactive sets the manager RayJob's mirrored deployment status to
+// Suspended once MultiKueue has confirmed its remote copy is gone - see
+// ray.WithMarkInactiveOnDelete.
+func markInactive(job *rayv1.RayJob) {
+	job.Status.JobDeploymentStatus = rayv1.JobDeploymentStatusSuspended
+}
 
 func copyJobStatus(dst, src *rayv1.RayJob) {
 	dst.Status = src.Status
